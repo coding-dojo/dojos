@@ -1,120 +1,63 @@
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 
 public class Doors {
 
 	static Date d = new Date();
-	static Random r = new Random(d.getTime());
-	static int rounds = 1000;
+	static Random r = new Random(d.getTime() + 321321);
+	static int rounds = 100;
 
-	static int countDoors=3;
-	
+	static int countDoors = 3;
+
 	public static void main(String[] args) {
 
-			lazyPlayer();
-			smartPlayer();
-			moodyPlayer();
+		while (true) {
+			playWithMe(new LazyPlayer());
+			playWithMe(new SmartPlayer());
+			playWithMe(new MoodyPlayer());
+			System.out.println();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
+		}
+	
 	}
 
-	public static void lazyPlayer() {
+	public static void playWithMe(Player player) {
+
 		int countWins = 0;
 
 		for (int i = 0; i < rounds; i++) {
+
 			Boolean[] doors = createDoors();
-			int selected = select();
-			if (wonWithoutSelectingNewDoor(doors, selected)) {
+			int selected = player.selectDoor();
+
+			if (selected < 0 || selected > (countDoors - 1)) {
+				throw new IllegalArgumentException("Selected door must be 0<=selected<=" + (countDoors - 1) + ", got ["
+						+ selected + "]");
+			}
+
+			if ((doors[selected] ^ player.switchDoor())) {
 				countWins++;
 			}
 		}
 
-		System.out.println("Lazy: Won " + countWins + " of " + rounds);
-
-	}
-
-	public static void smartPlayer() {
-		int countWins = 0;
-
-		for (int i = 0; i < rounds; i++) {
-
-			Boolean[] doors = createDoors();
-			int selected = select();
-			if(determineIfSmartPlayerWinByChanging(doors, selected)){
-				countWins++;
-			}
-		}
-
-		System.out.println("Smart: Won " + countWins + " of " + rounds);
-
-	}
-
-	public static void moodyPlayer() {
-		int countWins = 0;
-
-		for (int i = 0; i < rounds; i++) {
-
-			Boolean[] doors = createDoors();
-			int selected = select();
-			int doChange = random(2); // 0 = not changing
-			if (doChange == 1) {
-				if (determineIfSmartPlayerWinByChanging(doors, selected)) {
-					countWins++;
-				}
-			} else {
-				if (wonWithoutSelectingNewDoor(doors, selected)) {
-					countWins++;
-				}
-			}
-		}
-
-		System.out.println("Moody: Won " + countWins + " of " + rounds);
+		System.out.println(player.getName() + ": Won " + countWins + " of " + rounds);
 
 	}
 
 	public static Boolean[] createDoors() {
 		Boolean[] doors = new Boolean[countDoors];
 		for (int i = 0; i < doors.length; i++) {
-			doors[i]=false;
+			doors[i] = false;
 		}
 		int x = random(countDoors);
 		doors[x] = true;
 		return doors;
 	}
 
-	public static Boolean wonWithoutSelectingNewDoor(Boolean[] doors,
-			int selected) {
-		return doors[selected];
-	}
-	
-	public static Boolean determineIfSmartPlayerWinByChanging(Boolean[] doors, int selected){
-		List<Boolean> tueren=new ArrayList<Boolean>(countDoors);
-		Collections.addAll(tueren, doors);
-		tueren.remove(selected);
-		removeDoorWithoutPrice(tueren);
-		int secondSelected=random(tueren.size());
-		return tueren.get(secondSelected);
-	}
-	
-	public static void removeDoorWithoutPrice(List<Boolean> tueren){
-		for (Boolean door : tueren) {
-			if(!door){
-				tueren.remove(door);
-				break;
-			}
-		}
-	}
-	
-	public static Boolean wonWhileSelectingNewDoor(Boolean[] doors, int selected) {
-		return !doors[selected];
-	}
-
-	public static int select() {
-		return random(countDoors);
-	}
-
-	public static int random(int i) {
+	private static int random(int i) {
 		return r.nextInt(i);
 	}
 
