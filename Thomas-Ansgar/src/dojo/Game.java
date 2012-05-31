@@ -6,12 +6,10 @@ import java.util.Random;
 public class Game {
 
 	private ArrayList<Gate> gates;
-	private int numberOfWinningGates;
 	
 	public Game(int numberOfGates, int numberOfWinningGates) {
 		
 		this.gates = new ArrayList<Gate>();
-		this.numberOfWinningGates = numberOfWinningGates;
 		
 		setupGates(numberOfGates, numberOfWinningGates);
 		
@@ -22,15 +20,19 @@ public class Game {
 		setWinningGates(numberOfGates, numberOfWinningGates);
 	}
 
+	public ArrayList<Gate> getGates() {
+		return gates;
+	}
+	
 	private void createFalseGates(int numberOfGates) {
-		for( int i = 0; i <= numberOfGates; i++ ) {
+		for( int i = 0; i < numberOfGates; i++ ) {
 			Gate currentGate = new Gate(false);
 			gates.add(currentGate);
 		}
 	}
 
 	private void setWinningGates(int numberOfGates, int numberOfWinningGates) {
-		for ( int j = 0; j <= numberOfWinningGates; j++ ) {
+		for ( int j = 0; j < numberOfWinningGates; j++ ) {
 			int potentialGate = chooseGate(numberOfGates);
 			
 			while( Boolean.TRUE.equals(gates.get(potentialGate).isContent())) {
