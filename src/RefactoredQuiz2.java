@@ -7,9 +7,45 @@ public class RefactoredQuiz2 {
 
     interface Player {
         boolean redecide();
+
+        void lost();
+
+        void won();
+
+        int noOfWins();
+
+        int noOfLosses();
+
     }
 
-    static class LazyPlayer implements Player {
+    static abstract class WinCountingPlayer implements Player {
+
+        int won = 0;
+        int lost = 0;
+
+        @Override
+        public void lost() {
+            lost++;
+        }
+
+        @Override
+        public void won() {
+            won++;
+        }
+
+        @Override
+        public int noOfWins() {
+            return won;
+        }
+
+        @Override
+        public int noOfLosses() {
+            return lost;
+        }
+
+    }
+
+    static class LazyPlayer extends WinCountingPlayer {
 
         @Override
         public boolean redecide() {
@@ -18,7 +54,7 @@ public class RefactoredQuiz2 {
 
     }
 
-    static class SmartPlayer implements Player {
+    static class SmartPlayer extends WinCountingPlayer {
 
         @Override
         public boolean redecide() {
@@ -27,7 +63,7 @@ public class RefactoredQuiz2 {
 
     }
 
-    static class MoodyPlayer implements Player {
+    static class MoodyPlayer extends WinCountingPlayer {
 
         @Override
         public boolean redecide() {
@@ -61,27 +97,37 @@ public class RefactoredQuiz2 {
         quiz.registerPlayer(new SmartPlayer());
         quiz.registerPlayer(new MoodyPlayer());
         quiz.startGame();
+
+        quiz.result();
+
+    }
+
+    private void result() {
+        for (Player player : players) {
+            System.out.println(String.format("Player %s: won: %s, lost: %s, total: %s", player.getClass()
+                    .getSimpleName(), player.noOfWins(), player.noOfLosses(), player.noOfWins() + player.noOfLosses()));
+        }
     }
 
     public void play(Player player) {
-        int countWins = 0;
-
         for (int i = 0; i < ROUNDS; i++) {
             boolean[] doors = createDoors();
             int selected = select();
 
             if (player.redecide()) {
                 if (wonWhileSelectingNewDoor(doors, selected)) {
-                    countWins++;
+                    player.won();
+                } else {
+                    player.lost();
                 }
             } else {
                 if (wonWithoutSelectingNewDoor(doors, selected)) {
-                    countWins++;
+                    player.won();
+                } else {
+                    player.lost();
                 }
             }
         }
-
-        System.out.println(String.format("%s: Won %s of " + ROUNDS, player.getClass().getSimpleName(), countWins));
     }
 
     public boolean[] createDoors() {
