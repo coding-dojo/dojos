@@ -9,7 +9,7 @@ public interface Strategy {
 	 * @param gates
 	 * @return
 	 */
-	public Gate choose(ArrayList<Gate> gates);
+	public int choose(int numberOfGates);
 	
 	/**
 	 * Define the gate you want to change too. Might be the same if you do not want to change. 
@@ -18,6 +18,6 @@ public interface Strategy {
 	 * @param current
 	 * @return
 	 */
-	public Gate change(ArrayList<Gate> gates, Gate current);
+	public int change(int numberOfGates, int current);
 
 }

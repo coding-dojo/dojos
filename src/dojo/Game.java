@@ -17,6 +17,10 @@ public class Game {
 		
 	}
 
+	public ArrayList<Gate> getGates() {
+		return gates;
+	}
+	
 	public void setupGates(int numberOfGates, int numberOfWinningGates) {
 		createFalseGates(numberOfGates);
 		setWinningGates(numberOfGates, numberOfWinningGates);

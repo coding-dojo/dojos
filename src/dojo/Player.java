@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 public abstract class Player implements Strategy {
 
-	private Gate selectedGate;
+	private int selectedGate;
 
-	public Gate getSelectedGate() {
+	public int getSelectedGate() {
 		return selectedGate;
 	}
 
-	public void setSelectedGate(Gate selectedGate) {
+	public void setSelectedGate(int selectedGate) {
 		this.selectedGate = selectedGate;
 	}
 	
