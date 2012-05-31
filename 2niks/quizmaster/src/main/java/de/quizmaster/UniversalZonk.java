@@ -16,16 +16,16 @@ public class UniversalZonk {
         int alwaysSwitchingWins = 0;
         boolean alwaysSwitcherNextDecision = false;
         for (int i = 0; i < ITERATIONS; i++) {
-            if (nextRound(false, 3)) {
+            if (nextRound(false, false, 3)) {
                 keeperWins++;
             }
-            if (nextRound(true, 3)) {
+            if (nextRound(false, true, 3)) {
                 redeciderWins++;
             }
-            if (nextRound(RANDOM.nextBoolean(), 3)) {
+            if (nextRound(false, RANDOM.nextBoolean(), 3)) {
                 randomlySwitchingWins++;
             }
-            if (nextRound(alwaysSwitcherNextDecision, 3)) {
+            if (nextRound(false, alwaysSwitcherNextDecision, 3)) {
                 alwaysSwitchingWins++;
                 alwaysSwitcherNextDecision = !alwaysSwitcherNextDecision;
             }
@@ -37,19 +37,25 @@ public class UniversalZonk {
 
     }
 
-    static boolean nextRound(boolean redecide, int noOfDoors) {
-        System.out.println(noOfDoors);
-        boolean won = new Random(System.currentTimeMillis()).nextInt(noOfDoors) == 0;
-        if (!redecide) {
-            return won;
+    static boolean nextRound(boolean alreadyWon, boolean redecide, int noOfDoors) {
+
+        if (!alreadyWon) {
+            alreadyWon = new Random(System.currentTimeMillis()).nextInt(noOfDoors) == 0;
         }
-        if (won) {
+
+        if (!redecide) {
+            return alreadyWon;
+        }
+
+        if (alreadyWon && noOfDoors > 2) {
             return false;
         }
-        if (noOfDoors < 3) {
-            return won;
+
+        if (noOfDoors == 1) {
+            return alreadyWon;
         }
-        return nextRound(redecide, noOfDoors - 1);
+
+        return nextRound(alreadyWon, redecide, noOfDoors - 1);
     }
 
     private static void printResult(String player, int noOfWins) {
